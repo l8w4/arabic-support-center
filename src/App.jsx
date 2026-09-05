@@ -17,6 +17,8 @@ import {
   AlertCircle,
   RotateCcw,
   Languages,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
 /* ---------------------------------------------------------------- */
@@ -249,58 +251,60 @@ function persist(key, value) {
 /* ---------------------------------------------------------------- */
 
 const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700&family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Tajawal:wght@400;500;700&family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
 
-.asc-root { font-family: 'Tajawal', sans-serif; background: #12312C; color: #EDE6D6; }
+.asc-root { font-family: 'Tajawal', sans-serif; background: #16233F; color: #F2F4F8; }
 [lang="en"] .asc-root { font-family: 'Inter', sans-serif; }
-.asc-display { font-family: 'Amiri', serif; }
-[lang="en"] .asc-display { font-family: 'Playfair Display', serif; }
+.asc-display { font-family: 'Cairo', sans-serif; font-weight: 700; }
+[lang="en"] .asc-display { font-family: 'Poppins', sans-serif; font-weight: 700; }
 
-.asc-sidebar { width: 220px; background: #0E2723; border-left: 1px solid rgba(201,154,62,0.25); display:flex; flex-direction:column; }
-[dir="ltr"] .asc-sidebar { border-left:none; border-right: 1px solid rgba(201,154,62,0.25); }
-.asc-nav-item { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:8px; color:#CFC6AF; cursor:pointer; font-size:14px; transition: background .15s, color .15s; }
-.asc-nav-item:hover { background: rgba(201,154,62,0.10); color:#EDE6D6; }
-.asc-nav-item.active { background: rgba(201,154,62,0.16); color:#E9C878; font-weight:600; }
+.asc-sidebar { width: 220px; background: #101B33; border-left: 1px solid rgba(220,75,57,0.25); display:flex; flex-direction:column; }
+[dir="ltr"] .asc-sidebar { border-left:none; border-right: 1px solid rgba(220,75,57,0.25); }
+.asc-nav-item { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:8px; color:#C7CEE0; cursor:pointer; font-size:14px; transition: background .15s, color .15s; }
+.asc-nav-item:hover { background: rgba(220,75,57,0.12); color:#F2F4F8; }
+.asc-nav-item.active { background: rgba(220,75,57,0.18); color:#F4CD3C; font-weight:600; }
 
-.asc-card { background:#F4EEDD; color:#1F2A24; border-radius:10px; border:1px solid rgba(201,154,62,0.35); position:relative; padding:18px; }
-.asc-card::before { content:''; position:absolute; top:0; right:20px; width:34px; height:7px; background:#C99A3E; border-radius:0 0 4px 4px; }
+.asc-card { background:#FFFFFF; color:#16233F; border-radius:10px; border:1px solid rgba(220,75,57,0.25); position:relative; padding:18px; }
+.asc-card::before { content:''; position:absolute; top:0; right:20px; width:34px; height:7px; background:#DC4B39; border-radius:0 0 4px 4px; }
 [dir="ltr"] .asc-card::before { right:auto; left:20px; }
 
 .asc-btn { border-radius:8px; padding:8px 14px; font-size:14px; font-weight:600; cursor:pointer; border:1px solid transparent; transition: opacity .15s, background .15s; display:inline-flex; align-items:center; gap:6px; }
-.asc-btn-primary { background:#C99A3E; color:#12312C; }
+.asc-btn-primary { background:#DC4B39; color:#FFFFFF; }
 .asc-btn-primary:hover { opacity:0.9; }
-.asc-btn-ghost { background:transparent; color:#EDE6D6; border-color:rgba(237,230,214,0.35); }
-.asc-btn-ghost:hover { background:rgba(237,230,214,0.08); }
-.asc-btn-dark { background:#1F2A24; color:#F4EEDD; }
+.asc-btn-ghost { background:transparent; color:#F2F4F8; border-color:rgba(242,244,248,0.35); }
+.asc-btn-ghost:hover { background:rgba(242,244,248,0.08); }
+.asc-btn-dark { background:#16233F; color:#FFFFFF; }
 .asc-btn-dark:hover { opacity:0.85; }
-.asc-icon-btn { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; border:1px solid rgba(31,42,36,0.15); background:transparent; color:#1F2A24; }
-.asc-icon-btn:hover { background: rgba(31,42,36,0.06); }
+.asc-icon-btn { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; border:1px solid rgba(22,35,63,0.15); background:transparent; color:#16233F; }
+.asc-icon-btn:hover { background: rgba(22,35,63,0.06); }
 
-.asc-input { width:100%; border-radius:8px; border:1px solid rgba(31,42,36,0.2); padding:8px 12px; font-family:inherit; font-size:14px; background:#FFFDF7; color:#1F2A24; }
-.asc-input:focus { outline:2px solid #C99A3E; outline-offset:1px; }
-.asc-input-dark { background:#173832; color:#EDE6D6; border:1px solid rgba(201,154,62,0.3); }
+.asc-input { width:100%; border-radius:8px; border:1px solid rgba(22,35,63,0.2); padding:8px 12px; font-family:inherit; font-size:14px; background:#FFFFFF; color:#16233F; }
+.asc-input:focus { outline:2px solid #DC4B39; outline-offset:1px; }
+.asc-input-dark { background:#1E2F52; color:#F2F4F8; border:1px solid rgba(220,75,57,0.3); }
 .asc-label { font-size:12px; color:#5B6660; margin-bottom:4px; display:block; }
 
 .asc-badge { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:600; }
-.asc-badge-present { background:rgba(95,168,138,0.18); color:#3E7A62; }
-.asc-badge-absent { background:rgba(181,69,59,0.15); color:#B5453B; }
-.asc-badge-excused { background:rgba(201,154,62,0.18); color:#93701F; }
+.asc-badge-present { background:rgba(94,194,183,0.20); color:#1F6E64; }
+.asc-badge-absent { background:rgba(220,75,57,0.15); color:#B23A2B; }
+.asc-badge-excused { background:rgba(244,205,60,0.25); color:#8A6A12; }
 
-.asc-tab { padding:8px 16px; border-radius:8px 8px 0 0; font-size:14px; cursor:pointer; color:#CFC6AF; border-bottom:2px solid transparent; }
-.asc-tab.active { color:#E9C878; border-bottom:2px solid #E9C878; font-weight:600; }
+.asc-tab { padding:8px 16px; border-radius:8px 8px 0 0; font-size:14px; cursor:pointer; color:#C7CEE0; border-bottom:2px solid transparent; }
+.asc-tab.active { color:#F4CD3C; border-bottom:2px solid #F4CD3C; font-weight:600; }
 
-.asc-toggle { flex:1; text-align:center; padding:10px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; border:1px solid rgba(31,42,36,0.15); color:#5B6660; background:#FFFDF7; }
-.asc-toggle.on-present { background:rgba(95,168,138,0.18); color:#3E7A62; border-color:#5FA88A; }
-.asc-toggle.on-absent { background:rgba(181,69,59,0.15); color:#B5453B; border-color:#B5453B; }
-.asc-toggle.on-excused { background:rgba(201,154,62,0.18); color:#93701F; border-color:#C99A3E; }
+.asc-toggle { flex:1; text-align:center; padding:10px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; border:1px solid rgba(22,35,63,0.15); color:#5B6660; background:#FFFFFF; }
+.asc-toggle.on-present { background:rgba(94,194,183,0.20); color:#1F6E64; border-color:#5EC2B7; }
+.asc-toggle.on-absent { background:rgba(220,75,57,0.15); color:#B23A2B; border-color:#DC4B39; }
+.asc-toggle.on-excused { background:rgba(244,205,60,0.25); color:#8A6A12; border-color:#F4CD3C; }
 
-.asc-lang-btn { display:inline-flex; align-items:center; gap:5px; font-size:12px; padding:5px 10px; border-radius:999px; background:rgba(201,154,62,0.15); color:#E9C878; cursor:pointer; border:1px solid rgba(201,154,62,0.3); }
-.asc-lang-btn:hover { background:rgba(201,154,62,0.25); }
+.asc-lang-btn { display:inline-flex; align-items:center; gap:5px; font-size:12px; padding:5px 10px; border-radius:999px; background:rgba(244,205,60,0.18); color:#F4CD3C; cursor:pointer; border:1px solid rgba(244,205,60,0.4); }
+.asc-lang-btn:hover { background:rgba(244,205,60,0.28); }
+
+.asc-eye-btn { position:absolute; background:none; border:none; cursor:pointer; color:#5B6660; display:flex; align-items:center; padding:4px; }
 
 .asc-scroll::-webkit-scrollbar { width:8px; }
-.asc-scroll::-webkit-scrollbar-thumb { background: rgba(201,154,62,0.4); border-radius:4px; }
+.asc-scroll::-webkit-scrollbar-thumb { background: rgba(220,75,57,0.35); border-radius:4px; }
 
-.asc-spinner { width:28px; height:28px; border-radius:50%; border:3px solid rgba(201,154,62,0.25); border-top-color:#C99A3E; animation: asc-spin 0.8s linear infinite; }
+.asc-spinner { width:28px; height:28px; border-radius:50%; border:3px solid rgba(220,75,57,0.25); border-top-color:#DC4B39; animation: asc-spin 0.8s linear infinite; }
 @keyframes asc-spin { to { transform: rotate(360deg); } }
 `;
 
@@ -355,7 +359,7 @@ function ScoreForm({ initialScores, initialNotes, onSave }) {
             <span className="asc-label" style={{ margin: 0 }}>{f.label}</span>
             <span style={{ fontSize: 13, fontWeight: 700 }}>{scores[f.key]}/9</span>
           </div>
-          <input type="range" min={1} max={9} value={scores[f.key]} onChange={(e) => setScores((s) => ({ ...s, [f.key]: Number(e.target.value) }))} style={{ width: "100%", accentColor: "#C99A3E" }} />
+          <input type="range" min={1} max={9} value={scores[f.key]} onChange={(e) => setScores((s) => ({ ...s, [f.key]: Number(e.target.value) }))} style={{ width: "100%", accentColor: "#DC4B39" }} />
         </div>
       ))}
       <div>
@@ -377,6 +381,7 @@ function LoginScreen({ onLogin }) {
   const { t, lang } = useLang();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   function submit(e) {
@@ -396,7 +401,7 @@ function LoginScreen({ onLogin }) {
       <LangToggle style={{ position: "absolute", top: 20, insetInlineEnd: 20 }} />
       <form onSubmit={submit} className="asc-card" style={{ width: 340 }}>
         <div style={{ textAlign: "center", marginBottom: 18 }}>
-          <div style={{ width: 56, height: 56, borderRadius: 14, background: "#12312C", color: "#E9C878", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
+          <div style={{ width: 56, height: 56, borderRadius: 14, background: "#16233F", color: "#F4CD3C", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
             <GraduationCap size={28} />
           </div>
           <div className="asc-display" style={{ fontSize: 24, fontWeight: 700 }}>{t("appName")}</div>
@@ -409,9 +414,27 @@ function LoginScreen({ onLogin }) {
           </div>
           <div>
             <span className="asc-label">{t("password")}</span>
-            <input type="password" className="asc-input" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
+            <div style={{ position: "relative" }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                className="asc-input"
+                style={{ [lang === "ar" ? "paddingLeft" : "paddingRight"]: 36 }}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+              />
+              <button
+                type="button"
+                className="asc-eye-btn"
+                style={{ top: 6, [lang === "ar" ? "left" : "right"]: 6 }}
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+              </button>
+            </div>
           </div>
-          {error && <div style={{ color: "#B5453B", fontSize: 13 }}>{error}</div>}
+          {error && <div style={{ color: "#DC4B39", fontSize: 13 }}>{error}</div>}
           <button type="submit" className="asc-btn asc-btn-primary" style={{ justifyContent: "center", marginTop: 4 }}>{t("loginBtn")}</button>
         </div>
       </form>
@@ -433,12 +456,12 @@ function Sidebar({ page, setPage, account, onLogout, onReset }) {
   ];
   return (
     <div className="asc-sidebar">
-      <div style={{ padding: "20px 16px", borderBottom: "1px solid rgba(201,154,62,0.15)" }}>
+      <div style={{ padding: "20px 16px", borderBottom: "1px solid rgba(220,75,57,0.15)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-          <GraduationCap size={22} color="#E9C878" />
+          <GraduationCap size={22} color="#F4CD3C" />
           <span className="asc-display" style={{ fontSize: 16, fontWeight: 700 }}>{t("appName")}</span>
         </div>
-        <div style={{ fontSize: 10, color: "#8A9089", marginBottom: 10 }}>{t("appNameSub")}</div>
+        <div style={{ fontSize: 10, color: "#8891A8", marginBottom: 10 }}>{t("appNameSub")}</div>
         <LangToggle />
       </div>
       <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
@@ -449,8 +472,8 @@ function Sidebar({ page, setPage, account, onLogout, onReset }) {
           </div>
         ))}
       </div>
-      <div style={{ padding: 12, borderTop: "1px solid rgba(201,154,62,0.15)" }}>
-        <div style={{ fontSize: 12, color: "#8A9089", marginBottom: 8 }}>
+      <div style={{ padding: 12, borderTop: "1px solid rgba(220,75,57,0.15)" }}>
+        <div style={{ fontSize: 12, color: "#8891A8", marginBottom: 8 }}>
           {account.displayName[lang]} · {t(account.roleKey)}
         </div>
         {account.roleKey === "admin" && (
@@ -480,13 +503,13 @@ function Dashboard({ account, total, present, attention, activity, onOpenStudent
         <div className="asc-display" style={{ fontSize: 22, fontWeight: 700 }}>
           {t("welcomeBack")}{account.roleKey === "teacher" ? t("teacherPrefix") : ""}{account.displayName[lang]}
         </div>
-        <div style={{ fontSize: 13, color: "#B9B097" }}>{t("todaySummary")}</div>
+        <div style={{ fontSize: 13, color: "#AFB8CC" }}>{t("todaySummary")}</div>
       </div>
 
       <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 20 }}>
-        <StatCard icon={Users} label={t("students")} value={total} accent="#C99A3E" />
-        <StatCard icon={Check} label={t("presentToday")} value={present} accent="#5FA88A" />
-        <StatCard icon={AlertCircle} label={t("needsAttention")} value={attention.length} accent="#B5453B" />
+        <StatCard icon={Users} label={t("students")} value={total} accent="#F4CD3C" />
+        <StatCard icon={Check} label={t("presentToday")} value={present} accent="#5EC2B7" />
+        <StatCard icon={AlertCircle} label={t("needsAttention")} value={attention.length} accent="#DC4B39" />
       </div>
 
       <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
@@ -495,7 +518,7 @@ function Dashboard({ account, total, present, attention, activity, onOpenStudent
           {attention.length === 0 && <div style={{ fontSize: 13, color: "#5B6660" }}>{t("noAttention")}</div>}
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {attention.map((s) => (
-              <div key={s.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid rgba(31,42,36,0.08)" }}>
+              <div key={s.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid rgba(22,35,63,0.08)" }}>
                 <div>
                   <div style={{ fontWeight: 600, fontSize: 14 }}>{s.name}</div>
                   <div style={{ fontSize: 12, color: "#5B6660" }}>{s.attendance === "absent" ? t("absentToday") : t("lowScore")}</div>
@@ -510,9 +533,9 @@ function Dashboard({ account, total, present, attention, activity, onOpenStudent
           <div style={{ fontWeight: 700, marginBottom: 10 }}>{t("recentActivity")}</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {activity.map((a) => (
-              <div key={a.id} style={{ fontSize: 13, borderBottom: "1px solid rgba(31,42,36,0.08)", paddingBottom: 6 }}>
+              <div key={a.id} style={{ fontSize: 13, borderBottom: "1px solid rgba(22,35,63,0.08)", paddingBottom: 6 }}>
                 <div>{lang === "ar" ? a.textAr : a.textEn || a.textAr}</div>
-                <div style={{ fontSize: 11, color: "#8A9089" }}>{a.time}</div>
+                <div style={{ fontSize: 11, color: "#8891A8" }}>{a.time}</div>
               </div>
             ))}
           </div>
@@ -538,8 +561,8 @@ function StudentCard({ s, onOpen, onEdit, onDelete }) {
         <AttendanceBadge status={s.attendance} />
       </div>
       <div style={{ display: "flex", gap: 6, margin: "10px 0", flexWrap: "wrap" }}>
-        <span className="asc-badge" style={{ background: "rgba(31,42,36,0.06)", color: "#1F2A24" }}>{t("grade" + s.grade)}</span>
-        <span className="asc-badge" style={{ background: "rgba(31,42,36,0.06)", color: "#1F2A24" }}>{t(s.level)}</span>
+        <span className="asc-badge" style={{ background: "rgba(22,35,63,0.06)", color: "#16233F" }}>{t("grade" + s.grade)}</span>
+        <span className="asc-badge" style={{ background: "rgba(22,35,63,0.06)", color: "#16233F" }}>{t(s.level)}</span>
       </div>
       <div style={{ fontSize: 12, color: "#5B6660", marginBottom: 12 }}>
         {t("parentLabel")}: {s.parent || "—"} · {s.phone || "—"}
@@ -565,7 +588,7 @@ function StudentsPage({ students, query, setQuery, onAdd, onEdit, onDelete, onOp
         <div className="asc-display" style={{ fontSize: 22, fontWeight: 700 }}>{t("students")}</div>
         <div style={{ display: "flex", gap: 10 }}>
           <div style={{ position: "relative" }}>
-            <Search size={15} style={{ position: "absolute", top: 10, [side]: 10, color: "#8A9089" }} />
+            <Search size={15} style={{ position: "absolute", top: 10, [side]: 10, color: "#8891A8" }} />
             <input className="asc-input asc-input-dark" style={{ [lang === "ar" ? "paddingRight" : "paddingLeft"]: 32, width: 200 }} placeholder={t("searchPlaceholder")} value={query} onChange={(e) => setQuery(e.target.value)} />
           </div>
           <button className="asc-btn asc-btn-primary" onClick={onAdd}><Plus size={16} /> {t("addStudent")}</button>
@@ -588,7 +611,7 @@ function StudentFormModal({ data, onCancel, onSave }) {
   const field = (key, value) => setForm((f) => ({ ...f, [key]: value }));
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(18,49,44,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 20 }}>
+    <div style={{ position: "fixed", inset: 0, background: "rgba(22,35,63,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 20 }}>
       <div className="asc-card" style={{ width: 420, maxHeight: "85%", overflowY: "auto" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
           <div style={{ fontWeight: 700, fontSize: 16 }}>{isEdit ? t("editStudentTitle") : t("addStudentTitle")}</div>
@@ -617,7 +640,7 @@ function StudentFormModal({ data, onCancel, onSave }) {
         </div>
         <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
           <button className="asc-btn asc-btn-primary" style={{ flex: 1, justifyContent: "center", opacity: canSave ? 1 : 0.5, cursor: canSave ? "pointer" : "not-allowed" }} onClick={() => canSave && onSave(form)}>{t("save")}</button>
-          <button className="asc-btn" style={{ flex: 1, justifyContent: "center", background: "transparent", border: "1px solid rgba(31,42,36,0.25)", color: "#1F2A24" }} onClick={onCancel}>{t("cancel")}</button>
+          <button className="asc-btn" style={{ flex: 1, justifyContent: "center", background: "transparent", border: "1px solid rgba(22,35,63,0.25)", color: "#16233F" }} onClick={onCancel}>{t("cancel")}</button>
         </div>
       </div>
     </div>
@@ -656,12 +679,12 @@ function StudentProfile({ student, tab, setTab, onBack, onEdit, onAttendance, on
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
         <div>
           <div className="asc-display" style={{ fontSize: 22, fontWeight: 700 }}>{student.name}</div>
-          <div style={{ fontSize: 12, color: "#B9B097" }}>{student.studentId} · {t("grade" + student.grade)}</div>
+          <div style={{ fontSize: 12, color: "#AFB8CC" }}>{student.studentId} · {t("grade" + student.grade)}</div>
         </div>
         <button className="asc-btn asc-btn-dark" onClick={onEdit}><Pencil size={15} /> {t("edit")}</button>
       </div>
 
-      <div style={{ display: "flex", gap: 4, borderBottom: "1px solid rgba(201,154,62,0.2)", marginBottom: 16 }}>
+      <div style={{ display: "flex", gap: 4, borderBottom: "1px solid rgba(220,75,57,0.2)", marginBottom: 16 }}>
         {tabs.map((tb) => (
           <div key={tb.key} className={`asc-tab ${tab === tb.key ? "active" : ""}`} onClick={() => setTab(tb.key)}>{tb.label}</div>
         ))}
@@ -714,10 +737,10 @@ function AttendancePage({ students, onSet, onOpen }) {
   return (
     <div>
       <div className="asc-display" style={{ fontSize: 22, fontWeight: 700, marginBottom: 2 }}>{t("attendance")}</div>
-      <div style={{ fontSize: 13, color: "#B9B097", marginBottom: 16 }}>{today}</div>
+      <div style={{ fontSize: 13, color: "#AFB8CC", marginBottom: 16 }}>{today}</div>
       <div className="asc-card">
         {students.map((s) => (
-          <div key={s.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "10px 0", borderBottom: "1px solid rgba(31,42,36,0.08)", flexWrap: "wrap" }}>
+          <div key={s.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "10px 0", borderBottom: "1px solid rgba(22,35,63,0.08)", flexWrap: "wrap" }}>
             <div style={{ cursor: "pointer", minWidth: 140 }} onClick={() => onOpen(s.id)}>
               <div style={{ fontWeight: 600 }}>{s.name}</div>
               <div style={{ fontSize: 12, color: "#5B6660" }}>{t("grade" + s.grade)}</div>
@@ -746,7 +769,7 @@ function AssessmentPage({ students, selectedId, setSelectedId, onSave }) {
       <div className="asc-display" style={{ fontSize: 22, fontWeight: 700, marginBottom: 16 }}>{t("assessment")}</div>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 18 }}>
         {students.map((s) => (
-          <div key={s.id} onClick={() => setSelectedId(s.id)} style={{ padding: "6px 14px", borderRadius: 999, fontSize: 13, cursor: "pointer", background: student && student.id === s.id ? "#E9C878" : "rgba(237,230,214,0.08)", color: student && student.id === s.id ? "#12312C" : "#EDE6D6", fontWeight: student && student.id === s.id ? 700 : 400 }}>
+          <div key={s.id} onClick={() => setSelectedId(s.id)} style={{ padding: "6px 14px", borderRadius: 999, fontSize: 13, cursor: "pointer", background: student && student.id === s.id ? "#F4CD3C" : "rgba(242,244,248,0.08)", color: student && student.id === s.id ? "#16233F" : "#F2F4F8", fontWeight: student && student.id === s.id ? 700 : 400 }}>
             {s.name}
           </div>
         ))}
