@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext } from "react";
+import React, { useState, useEffect, useRef, createContext, useContext } from "react";
 import {
   GraduationCap,
   LayoutDashboard,
@@ -19,6 +19,8 @@ import {
   Languages,
   Eye,
   EyeOff,
+  Info,
+  ShieldCheck,
 } from "lucide-react";
 
 /* ---------------------------------------------------------------- */
@@ -34,13 +36,16 @@ const STRINGS = {
     loginBtn: "دخول",
     loginError: "اسم المستخدم أو كلمة المرور غير صحيحة",
     dashboard: "لوحة التحكم",
+    overview: "نظرة عامة",
     students: "الطلاب",
     attendance: "الحضور",
     assessment: "التقييم",
+    manageUsers: "إدارة المستخدمين",
     resetData: "إعادة تعيين البيانات",
     logout: "تسجيل الخروج",
     teacher: "معلم",
     admin: "مسؤول",
+    superadmin: "مدير عام",
     teacherPrefix: "أ. ",
     welcomeBack: "مرحبًا بعودتك، ",
     todaySummary: "هذا ملخص اليوم في المركز",
@@ -82,6 +87,7 @@ const STRINGS = {
     present: "حاضر",
     absent: "غائب",
     excused: "مستأذن",
+    unmarked: "لم يُسجَّل",
     confirmReset: "هل أنت متأكد من إعادة تعيين جميع البيانات إلى القيم الافتراضية؟",
     grade1: "الصف الأول",
     grade2: "الصف الثاني",
@@ -92,6 +98,33 @@ const STRINGS = {
     beginner: "مبتدئ",
     intermediate: "متوسط",
     advanced: "متقدم",
+    selectDate: "اختر التاريخ",
+    submitAttendance: "حفظ الحضور",
+    attendanceSaved: "تم حفظ الحضور بنجاح",
+    studentAdded: "تمت إضافة الطالب بنجاح",
+    studentUpdated: "تم تحديث بيانات الطالب بنجاح",
+    studentDeleted: "تم حذف الطالب بنجاح",
+    assessmentSaved: "تم حفظ التقييم بنجاح",
+    notesSaved: "تم حفظ الملاحظات بنجاح",
+    dataReset: "تمت إعادة تعيين البيانات بنجاح",
+    overviewTitle: "نظرة عامة على النظام",
+    overviewIntro: "نظام ويب متكامل لإدارة ومتابعة وتقييم طلاب مركز دعم اللغة العربية. يهدف إلى:",
+    overviewGoal1: "تسجيل بيانات الطلاب وأولياء الأمور بشكل شامل.",
+    overviewGoal2: "تحديد المستوى التشخيصي للطالب.",
+    overviewGoal3: "متابعة الحضور والغياب والأنشطة والأعمال.",
+    overviewGoal4: "إصدار تقارير أسبوعية وشهرية.",
+    overviewGoal5: "توثيق التواصل مع أولياء الأمور.",
+    overviewGoal6: "إدارة جدول الحصص الأسبوعي.",
+    overviewGoal7: "رفع الملفات (صور، فيديوهات، أوراق عمل، موافقات أولياء الأمور).",
+    overviewNote: "ملاحظة: بعض هذه الأهداف ما زالت قيد التطوير في هذا الإصدار التجريبي.",
+    addUser: "إضافة مستخدم",
+    fullNameLabel: "الاسم الكامل",
+    roleLabel: "الصلاحية",
+    builtIn: "مدمج في النظام",
+    userAdded: "تمت إضافة المستخدم بنجاح",
+    userDeleted: "تم حذف المستخدم",
+    confirmDeleteUser: "هل تريد حذف هذا المستخدم؟",
+    existingUsers: "المستخدمون الحاليون",
   },
   en: {
     appName: "Arabic Support Center",
@@ -101,13 +134,16 @@ const STRINGS = {
     loginBtn: "Log in",
     loginError: "Incorrect username or password",
     dashboard: "Dashboard",
+    overview: "Overview",
     students: "Students",
     attendance: "Attendance",
     assessment: "Assessment",
+    manageUsers: "Manage Users",
     resetData: "Reset data",
     logout: "Log out",
     teacher: "Teacher",
     admin: "Admin",
+    superadmin: "Super Admin",
     teacherPrefix: "",
     welcomeBack: "Welcome back, ",
     todaySummary: "Here's today's summary for the center",
@@ -149,6 +185,7 @@ const STRINGS = {
     present: "Present",
     absent: "Absent",
     excused: "Excused",
+    unmarked: "Not marked",
     confirmReset: "Are you sure you want to reset all data to defaults?",
     grade1: "Grade 1",
     grade2: "Grade 2",
@@ -159,20 +196,69 @@ const STRINGS = {
     beginner: "Beginner",
     intermediate: "Intermediate",
     advanced: "Advanced",
+    selectDate: "Select date",
+    submitAttendance: "Submit attendance",
+    attendanceSaved: "Attendance saved successfully",
+    studentAdded: "Student added successfully",
+    studentUpdated: "Student updated successfully",
+    studentDeleted: "Student deleted successfully",
+    assessmentSaved: "Assessment saved successfully",
+    notesSaved: "Notes saved successfully",
+    dataReset: "Data has been reset successfully",
+    overviewTitle: "System Overview",
+    overviewIntro: "An integrated web system to manage, track, and assess students at the Arabic Language Support Center. It aims to:",
+    overviewGoal1: "Comprehensively register student and parent information.",
+    overviewGoal2: "Determine each student's diagnostic level.",
+    overviewGoal3: "Track attendance, activities, and coursework.",
+    overviewGoal4: "Generate weekly and monthly reports.",
+    overviewGoal5: "Document communication with parents.",
+    overviewGoal6: "Manage the weekly class schedule.",
+    overviewGoal7: "Upload files (photos, videos, worksheets, parent consent forms).",
+    overviewNote: "Note: some of these goals are still under development in this prototype version.",
+    addUser: "Add user",
+    fullNameLabel: "Full name",
+    roleLabel: "Role",
+    builtIn: "Built-in",
+    userAdded: "User added successfully",
+    userDeleted: "User removed",
+    confirmDeleteUser: "Remove this user?",
+    existingUsers: "Current users",
   },
 };
 
-const LangContext = createContext({ lang: "ar", t: (k) => k, toggleLang: () => {} });
+const LangContext = createContext({ lang: "ar", t: (k) => k, toggleLang: () => {}, notify: () => {} });
 const useLang = () => useContext(LangContext);
 
 /* ---------------------------------------------------------------- */
 /* Accounts (demo-grade — a UI gate, not real server security)       */
 /* ---------------------------------------------------------------- */
 
-const ACCOUNTS = [
-  { username: "iman", password: "Iman@2026", roleKey: "teacher", displayName: { ar: "إيمان", en: "Iman" } },
+const BASE_ACCOUNTS = [
+  { username: "enas", password: "Enas@2026", roleKey: "teacher", displayName: { ar: "إيناس", en: "Enas" } },
+  { username: "emad", password: "Emad@2026", roleKey: "teacher", displayName: { ar: "عماد", en: "Emad" } },
   { username: "admin", password: "Admin@2026", roleKey: "admin", displayName: { ar: "المسؤول", en: "Admin" } },
+  { username: "superadmin", password: "SuperAdmin@2026", roleKey: "superadmin", displayName: { ar: "المدير العام", en: "Super Admin" } },
 ];
+
+function hasAdminAccess(roleKey) {
+  return roleKey === "admin" || roleKey === "superadmin";
+}
+
+/* ---------------------------------------------------------------- */
+/* Dates                                                              */
+/* ---------------------------------------------------------------- */
+
+function todayStr() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function getStatusForDate(student, dateStr) {
+  return (student.attendanceHistory && student.attendanceHistory[dateStr]) || "unmarked";
+}
 
 /* ---------------------------------------------------------------- */
 /* Data (grade = 1-6, level = beginner|intermediate|advanced)        */
@@ -190,20 +276,20 @@ const emptyStudent = () => ({
   parent: "",
   phone: "",
   notes: "",
-  attendance: "present",
+  attendanceHistory: { [todayStr()]: "present" },
   scores: { reading: 5, writing: 5, dictation: 5, behavior: 5 },
   assessmentNotes: "",
 });
 
 const initialStudents = [
-  { id: 1, name: "أحمد الشريف", studentId: "AS-2024-01", grade: 4, level: "intermediate", parent: "محمد الشريف", phone: "0501234567", notes: "يحتاج إلى تدريب إضافي على القراءة الجهرية.", attendance: "present", scores: { reading: 7, writing: 6, dictation: 6, behavior: 8 }, assessmentNotes: "تحسّن ملحوظ في الأسبوعين الماضيين." },
-  { id: 2, name: "سارة المصري", studentId: "AS-2024-02", grade: 3, level: "beginner", parent: "ليلى المصري", phone: "0559876543", notes: "خجولة في المشاركة الصفية.", attendance: "absent", scores: { reading: 5, writing: 4, dictation: 5, behavior: 6 }, assessmentNotes: "" },
-  { id: 3, name: "يوسف حسن", studentId: "AS-2024-03", grade: 5, level: "advanced", parent: "حسن يوسف", phone: "0533456789", notes: "متفوق في الإملاء، يحتاج متابعة في القراءة.", attendance: "present", scores: { reading: 3, writing: 4, dictation: 5, behavior: 7 }, assessmentNotes: "القراءة أضعف مهارة حاليًا، نحتاج خطة علاجية." },
-  { id: 4, name: "لمى عبدالله", studentId: "AS-2024-04", grade: 2, level: "beginner", parent: "عبدالله سالم", phone: "0567891234", notes: "", attendance: "present", scores: { reading: 6, writing: 6, dictation: 7, behavior: 9 }, assessmentNotes: "" },
-  { id: 5, name: "خالد النجار", studentId: "AS-2024-05", grade: 6, level: "advanced", parent: "عمر النجار", phone: "0512345678", notes: "قائد إيجابي داخل الصف.", attendance: "present", scores: { reading: 8, writing: 8, dictation: 7, behavior: 8 }, assessmentNotes: "" },
-  { id: 6, name: "مريم سالم", studentId: "AS-2024-06", grade: 4, level: "intermediate", parent: "سالم أحمد", phone: "0598765432", notes: "", attendance: "excused", scores: { reading: 6, writing: 5, dictation: 6, behavior: 7 }, assessmentNotes: "" },
-  { id: 7, name: "عمر فارس", studentId: "AS-2024-07", grade: 3, level: "beginner", parent: "فارس عمر", phone: "0544567891", notes: "غياب متكرر هذا الشهر.", attendance: "absent", scores: { reading: 4, writing: 3, dictation: 4, behavior: 5 }, assessmentNotes: "يحتاج تواصل مع ولي الأمر بخصوص الحضور." },
-  { id: 8, name: "نور الدين", studentId: "AS-2024-08", grade: 5, level: "intermediate", parent: "الدين محمود", phone: "0523456781", notes: "", attendance: "present", scores: { reading: 7, writing: 7, dictation: 8, behavior: 9 }, assessmentNotes: "" },
+  { id: 1, name: "أحمد الشريف", studentId: "AS-2024-01", grade: 4, level: "intermediate", parent: "محمد الشريف", phone: "0501234567", notes: "يحتاج إلى تدريب إضافي على القراءة الجهرية.", attendanceHistory: { [todayStr()]: "present" }, scores: { reading: 7, writing: 6, dictation: 6, behavior: 8 }, assessmentNotes: "تحسّن ملحوظ في الأسبوعين الماضيين." },
+  { id: 2, name: "سارة المصري", studentId: "AS-2024-02", grade: 3, level: "beginner", parent: "ليلى المصري", phone: "0559876543", notes: "خجولة في المشاركة الصفية.", attendanceHistory: { [todayStr()]: "absent" }, scores: { reading: 5, writing: 4, dictation: 5, behavior: 6 }, assessmentNotes: "" },
+  { id: 3, name: "يوسف حسن", studentId: "AS-2024-03", grade: 5, level: "advanced", parent: "حسن يوسف", phone: "0533456789", notes: "متفوق في الإملاء، يحتاج متابعة في القراءة.", attendanceHistory: { [todayStr()]: "present" }, scores: { reading: 3, writing: 4, dictation: 5, behavior: 7 }, assessmentNotes: "القراءة أضعف مهارة حاليًا، نحتاج خطة علاجية." },
+  { id: 4, name: "لمى عبدالله", studentId: "AS-2024-04", grade: 2, level: "beginner", parent: "عبدالله سالم", phone: "0567891234", notes: "", attendanceHistory: { [todayStr()]: "present" }, scores: { reading: 6, writing: 6, dictation: 7, behavior: 9 }, assessmentNotes: "" },
+  { id: 5, name: "خالد النجار", studentId: "AS-2024-05", grade: 6, level: "advanced", parent: "عمر النجار", phone: "0512345678", notes: "قائد إيجابي داخل الصف.", attendanceHistory: { [todayStr()]: "present" }, scores: { reading: 8, writing: 8, dictation: 7, behavior: 8 }, assessmentNotes: "" },
+  { id: 6, name: "مريم سالم", studentId: "AS-2024-06", grade: 4, level: "intermediate", parent: "سالم أحمد", phone: "0598765432", notes: "", attendanceHistory: { [todayStr()]: "excused" }, scores: { reading: 6, writing: 5, dictation: 6, behavior: 7 }, assessmentNotes: "" },
+  { id: 7, name: "عمر فارس", studentId: "AS-2024-07", grade: 3, level: "beginner", parent: "فارس عمر", phone: "0544567891", notes: "غياب متكرر هذا الشهر.", attendanceHistory: { [todayStr()]: "absent" }, scores: { reading: 4, writing: 3, dictation: 4, behavior: 5 }, assessmentNotes: "يحتاج تواصل مع ولي الأمر بخصوص الحضور." },
+  { id: 8, name: "نور الدين", studentId: "AS-2024-08", grade: 5, level: "intermediate", parent: "الدين محمود", phone: "0523456781", notes: "", attendanceHistory: { [todayStr()]: "present" }, scores: { reading: 7, writing: 7, dictation: 8, behavior: 9 }, assessmentNotes: "" },
 ];
 
 const initialActivity = [
@@ -213,15 +299,16 @@ const initialActivity = [
 ];
 
 function needsAttention(s) {
-  return s.attendance === "absent" || Object.values(s.scores).some((v) => v <= 3);
+  return getStatusForDate(s, todayStr()) === "absent" || Object.values(s.scores).some((v) => v <= 3);
 }
 
 /* ---------------------------------------------------------------- */
 /* Persistent storage                                                 */
 /* ---------------------------------------------------------------- */
 
-const STUDENTS_KEY = "asc-students-v2";
+const STUDENTS_KEY = "asc-students-v3";
 const ACTIVITY_KEY = "asc-activity-v2";
+const ACCOUNTS_KEY = "asc-accounts-v1";
 
 function loadOrSeed(key, fallback) {
   try {
@@ -287,6 +374,7 @@ const CSS = `
 .asc-badge-present { background:rgba(94,194,183,0.20); color:#1F6E64; }
 .asc-badge-absent { background:rgba(220,75,57,0.15); color:#B23A2B; }
 .asc-badge-excused { background:rgba(244,205,60,0.25); color:#8A6A12; }
+.asc-badge-unmarked { background:rgba(91,102,96,0.14); color:#5B6660; }
 
 .asc-tab { padding:8px 16px; border-radius:8px 8px 0 0; font-size:14px; cursor:pointer; color:#C7CEE0; border-bottom:2px solid transparent; }
 .asc-tab.active { color:#F4CD3C; border-bottom:2px solid #F4CD3C; font-weight:600; }
@@ -300,6 +388,9 @@ const CSS = `
 .asc-lang-btn:hover { background:rgba(244,205,60,0.28); }
 
 .asc-eye-btn { position:absolute; background:none; border:none; cursor:pointer; color:#5B6660; display:flex; align-items:center; padding:4px; }
+
+.asc-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #16233F; color: #FFFFFF; padding: 12px 20px; border-radius: 999px; display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; box-shadow: 0 10px 28px rgba(0,0,0,0.3); z-index: 200; animation: asc-toast-in 0.25s ease-out; }
+@keyframes asc-toast-in { from { opacity:0; transform: translate(-50%, 12px); } to { opacity:1; transform: translate(-50%, 0); } }
 
 .asc-scroll::-webkit-scrollbar { width:8px; }
 .asc-scroll::-webkit-scrollbar-thumb { background: rgba(220,75,57,0.35); border-radius:4px; }
@@ -319,6 +410,16 @@ function LangToggle({ style }) {
       <Languages size={13} />
       {lang === "ar" ? "English" : "العربية"}
     </button>
+  );
+}
+
+function Toast({ message }) {
+  if (!message) return null;
+  return (
+    <div className="asc-toast">
+      <Check size={16} />
+      {message}
+    </div>
   );
 }
 
@@ -377,7 +478,7 @@ function ScoreForm({ initialScores, initialNotes, onSave }) {
 /* Login                                                              */
 /* ---------------------------------------------------------------- */
 
-function LoginScreen({ onLogin }) {
+function LoginScreen({ accounts, onLogin }) {
   const { t, lang } = useLang();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -386,7 +487,7 @@ function LoginScreen({ onLogin }) {
 
   function submit(e) {
     e.preventDefault();
-    const account = ACCOUNTS.find((a) => a.username.toLowerCase() === username.trim().toLowerCase() && a.password === password);
+    const account = accounts.find((a) => a.username.toLowerCase() === username.trim().toLowerCase() && a.password === password);
     if (account) {
       setError("");
       onLogin(account);
@@ -453,7 +554,11 @@ function Sidebar({ page, setPage, account, onLogout, onReset }) {
     { key: "students", label: t("students"), icon: Users },
     { key: "attendance", label: t("attendance"), icon: CalendarCheck },
     { key: "assessment", label: t("assessment"), icon: ClipboardList },
+    { key: "overview", label: t("overview"), icon: Info },
   ];
+  if (account.roleKey === "superadmin") {
+    items.push({ key: "users", label: t("manageUsers"), icon: ShieldCheck });
+  }
   return (
     <div className="asc-sidebar">
       <div style={{ padding: "20px 16px", borderBottom: "1px solid rgba(220,75,57,0.15)" }}>
@@ -476,7 +581,7 @@ function Sidebar({ page, setPage, account, onLogout, onReset }) {
         <div style={{ fontSize: 12, color: "#8891A8", marginBottom: 8 }}>
           {account.displayName[lang]} · {t(account.roleKey)}
         </div>
-        {account.roleKey === "admin" && (
+        {hasAdminAccess(account.roleKey) && (
           <div className="asc-nav-item" onClick={onReset} style={{ marginBottom: 4 }}>
             <RotateCcw size={16} />
             {t("resetData")}
@@ -521,7 +626,7 @@ function Dashboard({ account, total, present, attention, activity, onOpenStudent
               <div key={s.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid rgba(22,35,63,0.08)" }}>
                 <div>
                   <div style={{ fontWeight: 600, fontSize: 14 }}>{s.name}</div>
-                  <div style={{ fontSize: 12, color: "#5B6660" }}>{s.attendance === "absent" ? t("absentToday") : t("lowScore")}</div>
+                  <div style={{ fontSize: 12, color: "#5B6660" }}>{getStatusForDate(s, todayStr()) === "absent" ? t("absentToday") : t("lowScore")}</div>
                 </div>
                 <button className="asc-btn asc-btn-dark" style={{ padding: "5px 10px", fontSize: 12 }} onClick={() => onOpenStudent(s.id)}>{t("viewProfile")}</button>
               </div>
@@ -546,6 +651,105 @@ function Dashboard({ account, total, present, attention, activity, onOpenStudent
 }
 
 /* ---------------------------------------------------------------- */
+/* Overview                                                           */
+/* ---------------------------------------------------------------- */
+
+function OverviewPage() {
+  const { t } = useLang();
+  const goals = [1, 2, 3, 4, 5, 6, 7].map((n) => t("overviewGoal" + n));
+  return (
+    <div>
+      <div className="asc-display" style={{ fontSize: 22, fontWeight: 700, marginBottom: 16 }}>{t("overview")}</div>
+      <div className="asc-card" style={{ maxWidth: 640 }}>
+        <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 10 }}>{t("overviewTitle")}</div>
+        <p style={{ fontSize: 14, lineHeight: 1.7, marginBottom: 12 }}>{t("overviewIntro")}</p>
+        <ul style={{ margin: 0, paddingInlineStart: 20, display: "flex", flexDirection: "column", gap: 8 }}>
+          {goals.map((g, i) => (
+            <li key={i} style={{ fontSize: 14, lineHeight: 1.6 }}>{g}</li>
+          ))}
+        </ul>
+        <p style={{ fontSize: 12, color: "#5B6660", marginTop: 16, borderTop: "1px solid rgba(22,35,63,0.1)", paddingTop: 12 }}>{t("overviewNote")}</p>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* Manage users (superadmin only)                                     */
+/* ---------------------------------------------------------------- */
+
+function ManageUsersPage({ builtIn, dynamicAccounts, onAdd, onRemove }) {
+  const { t, lang } = useLang();
+  const [form, setForm] = useState({ name: "", username: "", password: "", roleKey: "teacher" });
+  const canAdd = form.name.trim() && form.username.trim() && form.password.trim();
+  const field = (key, value) => setForm((f) => ({ ...f, [key]: value }));
+
+  function submit() {
+    onAdd({
+      username: form.username.trim().toLowerCase(),
+      password: form.password,
+      roleKey: form.roleKey,
+      displayName: { ar: form.name, en: form.name },
+    });
+    setForm({ name: "", username: "", password: "", roleKey: "teacher" });
+  }
+
+  return (
+    <div>
+      <div className="asc-display" style={{ fontSize: 22, fontWeight: 700, marginBottom: 16 }}>{t("manageUsers")}</div>
+
+      <div className="asc-card" style={{ maxWidth: 460, marginBottom: 18 }}>
+        <div style={{ fontWeight: 700, marginBottom: 12 }}>{t("addUser")}</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <div><span className="asc-label">{t("fullNameLabel")}</span><input className="asc-input" value={form.name} onChange={(e) => field("name", e.target.value)} /></div>
+          <div><span className="asc-label">{t("username")}</span><input className="asc-input" value={form.username} onChange={(e) => field("username", e.target.value)} /></div>
+          <div><span className="asc-label">{t("password")}</span><input className="asc-input" value={form.password} onChange={(e) => field("password", e.target.value)} /></div>
+          <div>
+            <span className="asc-label">{t("roleLabel")}</span>
+            <select className="asc-input" value={form.roleKey} onChange={(e) => field("roleKey", e.target.value)}>
+              <option value="teacher">{t("teacher")}</option>
+              <option value="admin">{t("admin")}</option>
+              <option value="superadmin">{t("superadmin")}</option>
+            </select>
+          </div>
+          <button
+            className="asc-btn asc-btn-primary"
+            style={{ justifyContent: "center", opacity: canAdd ? 1 : 0.5, cursor: canAdd ? "pointer" : "not-allowed" }}
+            onClick={() => canAdd && submit()}
+          >
+            <Plus size={16} /> {t("addUser")}
+          </button>
+        </div>
+      </div>
+
+      <div className="asc-card" style={{ maxWidth: 460 }}>
+        <div style={{ fontWeight: 700, marginBottom: 12 }}>{t("existingUsers")}</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          {builtIn.map((a) => (
+            <div key={a.username} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: "1px solid rgba(22,35,63,0.08)" }}>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: 14 }}>{a.displayName[lang]} <span style={{ fontWeight: 400, fontSize: 12, color: "#5B6660" }}>· {t(a.roleKey)}</span></div>
+                <div style={{ fontSize: 12, color: "#5B6660" }}>@{a.username}</div>
+              </div>
+              <span className="asc-badge" style={{ background: "rgba(22,35,63,0.06)", color: "#16233F" }}>{t("builtIn")}</span>
+            </div>
+          ))}
+          {dynamicAccounts.map((a) => (
+            <div key={a.username} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: "1px solid rgba(22,35,63,0.08)" }}>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: 14 }}>{a.displayName[lang] || a.displayName.ar} <span style={{ fontWeight: 400, fontSize: 12, color: "#5B6660" }}>· {t(a.roleKey)}</span></div>
+                <div style={{ fontSize: 12, color: "#5B6660" }}>@{a.username}</div>
+              </div>
+              <button className="asc-icon-btn" onClick={() => onRemove(a.username)} title={t("delete")}><Trash2 size={15} /></button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------- */
 /* Students                                                           */
 /* ---------------------------------------------------------------- */
 
@@ -558,7 +762,7 @@ function StudentCard({ s, onOpen, onEdit, onDelete }) {
           <div style={{ fontWeight: 700, fontSize: 15 }}>{s.name}</div>
           <div style={{ fontSize: 12, color: "#5B6660" }}>{s.studentId}</div>
         </div>
-        <AttendanceBadge status={s.attendance} />
+        <AttendanceBadge status={getStatusForDate(s, todayStr())} />
       </div>
       <div style={{ display: "flex", gap: 6, margin: "10px 0", flexWrap: "wrap" }}>
         <span className="asc-badge" style={{ background: "rgba(22,35,63,0.06)", color: "#16233F" }}>{t("grade" + s.grade)}</span>
@@ -665,6 +869,7 @@ function StudentProfile({ student, tab, setTab, onBack, onEdit, onAttendance, on
   const { t, lang } = useLang();
   const [notesDraft, setNotesDraft] = useState(student.notes);
   const BackIcon = lang === "ar" ? ArrowRight : ArrowLeft;
+  const todayStatus = getStatusForDate(student, todayStr());
   const tabs = [
     { key: "info", label: t("studentInfoTab") },
     { key: "attendance", label: t("attendance") },
@@ -704,7 +909,7 @@ function StudentProfile({ student, tab, setTab, onBack, onEdit, onAttendance, on
           <div className="asc-label" style={{ marginBottom: 10 }}>{t("attendanceStatusToday")}</div>
           <div style={{ display: "flex", gap: 8 }}>
             {["present", "absent", "excused"].map((st) => (
-              <div key={st} className={`asc-toggle ${student.attendance === st ? `on-${st}` : ""}`} onClick={() => onAttendance(st)}>{t(st)}</div>
+              <div key={st} className={`asc-toggle ${todayStatus === st ? `on-${st}` : ""}`} onClick={() => onAttendance(st)}>{t(st)}</div>
             ))}
           </div>
         </div>
@@ -728,16 +933,45 @@ function StudentProfile({ student, tab, setTab, onBack, onEdit, onAttendance, on
 }
 
 /* ---------------------------------------------------------------- */
-/* Attendance page                                                    */
+/* Attendance page — pick a date, mark everyone, submit once          */
 /* ---------------------------------------------------------------- */
 
-function AttendancePage({ students, onSet, onOpen }) {
+function buildDraft(students, dateStr) {
+  const d = {};
+  students.forEach((s) => {
+    d[s.id] = (s.attendanceHistory && s.attendanceHistory[dateStr]) || "present";
+  });
+  return d;
+}
+
+function AttendancePage({ students, onSubmit, onOpen }) {
   const { t, lang } = useLang();
-  const today = new Date().toLocaleDateString(lang === "ar" ? "ar-EG" : "en-GB", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+  const [selectedDate, setSelectedDate] = useState(todayStr());
+  const [draft, setDraft] = useState(() => buildDraft(students, todayStr()));
+
+  useEffect(() => {
+    setDraft(buildDraft(students, selectedDate));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate]);
+
+  const formattedDate = new Date(selectedDate + "T00:00:00").toLocaleDateString(lang === "ar" ? "ar-EG" : "en-GB", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
   return (
     <div>
       <div className="asc-display" style={{ fontSize: 22, fontWeight: 700, marginBottom: 2 }}>{t("attendance")}</div>
-      <div style={{ fontSize: 13, color: "#AFB8CC", marginBottom: 16 }}>{today}</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 16 }}>
+        <div>
+          <span className="asc-label" style={{ marginBottom: 4 }}>{t("selectDate")}</span>
+          <input type="date" className="asc-input asc-input-dark" style={{ width: 180 }} value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
+        </div>
+        <div style={{ fontSize: 13, color: "#AFB8CC", marginTop: 16 }}>{formattedDate}</div>
+      </div>
+
       <div className="asc-card">
         {students.map((s) => (
           <div key={s.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "10px 0", borderBottom: "1px solid rgba(22,35,63,0.08)", flexWrap: "wrap" }}>
@@ -747,11 +981,25 @@ function AttendancePage({ students, onSet, onOpen }) {
             </div>
             <div style={{ display: "flex", gap: 6 }}>
               {["present", "absent", "excused"].map((st) => (
-                <div key={st} className={`asc-toggle ${s.attendance === st ? `on-${st}` : ""}`} style={{ padding: "6px 12px", fontSize: 13 }} onClick={() => onSet(s.id, st)}>{t(st)}</div>
+                <div
+                  key={st}
+                  className={`asc-toggle ${draft[s.id] === st ? `on-${st}` : ""}`}
+                  style={{ padding: "6px 12px", fontSize: 13 }}
+                  onClick={() => setDraft((d) => ({ ...d, [s.id]: st }))}
+                >
+                  {t(st)}
+                </div>
               ))}
             </div>
           </div>
         ))}
+        <button
+          className="asc-btn asc-btn-primary"
+          style={{ marginTop: 16, justifyContent: "center", width: "100%" }}
+          onClick={() => onSubmit(selectedDate, draft)}
+        >
+          <Check size={16} /> {t("submitAttendance")}
+        </button>
       </div>
     </div>
   );
@@ -808,14 +1056,33 @@ export default function ArabicSupportCenterPrototype() {
   const [page, setPage] = useState("dashboard");
   const [students, setStudents] = useState(initialStudents);
   const [activity, setActivity] = useState(initialActivity);
+  const [dynamicAccounts, setDynamicAccounts] = useState([]);
+  const [accountsLoaded, setAccountsLoaded] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [profileTab, setProfileTab] = useState("info");
   const [query, setQuery] = useState("");
   const [formStudent, setFormStudent] = useState(null);
   const [assessId, setAssessId] = useState(initialStudents[0].id);
+  const [toast, setToast] = useState({ msg: "", id: 0 });
+  const toastTimer = useRef(null);
 
   const t = (key) => (STRINGS[lang] && STRINGS[lang][key]) || key;
   const toggleLang = () => setLang((l) => (l === "ar" ? "en" : "ar"));
+
+  function notify(msg) {
+    setToast((tst) => ({ msg, id: tst.id + 1 }));
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast((tst) => ({ ...tst, msg: "" })), 2500);
+  }
+
+  // Accounts load independently of login, since a newly-added user needs to
+  // be able to log in without an existing session.
+  useEffect(() => {
+    if (accountsLoaded) return;
+    const list = loadOrSeed(ACCOUNTS_KEY, []);
+    setDynamicAccounts(list);
+    setAccountsLoaded(true);
+  }, [accountsLoaded]);
 
   useEffect(() => {
     if (!account || dataLoaded) return;
@@ -836,23 +1103,27 @@ export default function ArabicSupportCenterPrototype() {
   }
 
   const selected = students.find((s) => s.id === selectedId) || null;
+  const allAccounts = [...BASE_ACCOUNTS, ...dynamicAccounts];
 
   function openStudent(id) { setSelectedId(id); setProfileTab("info"); setPage("profile"); }
 
   function saveStudent(data) {
-    let newList, msgAr, msgEn;
+    let newList, msgAr, msgEn, toastMsg;
     if (data.id) {
       newList = students.map((s) => (s.id === data.id ? { ...s, ...data } : s));
       msgAr = `تم تحديث بيانات ${data.name}`;
       msgEn = `Updated ${data.name}'s details`;
+      toastMsg = t("studentUpdated");
     } else {
       const newStudent = { ...emptyStudent(), ...data, id: Date.now() };
       newList = [...students, newStudent];
       msgAr = `تمت إضافة الطالب ${data.name}`;
       msgEn = `Added student ${data.name}`;
+      toastMsg = t("studentAdded");
     }
     persistStudents(newList);
     log(msgAr, msgEn);
+    notify(toastMsg);
     setFormStudent(null);
   }
 
@@ -861,14 +1132,23 @@ export default function ArabicSupportCenterPrototype() {
     const newList = students.filter((x) => x.id !== id);
     persistStudents(newList);
     if (s) log(`تم حذف الطالب ${s.name}`, `Removed student ${s.name}`);
+    notify(t("studentDeleted"));
     if (selectedId === id) { setSelectedId(null); setPage("students"); }
   }
 
-  function setAttendance(id, status) {
+  function setAttendanceToday(id, status) {
     const s = students.find((x) => x.id === id);
-    const newList = students.map((x) => (x.id === id ? { ...x, attendance: status } : x));
+    const newList = students.map((x) => (x.id === id ? { ...x, attendanceHistory: { ...(x.attendanceHistory || {}), [todayStr()]: status } } : x));
     persistStudents(newList);
     if (s) log(`${s.name}: ${STRINGS.ar[status]}`, `${s.name}: ${STRINGS.en[status]}`);
+    notify(t("attendanceSaved"));
+  }
+
+  function submitAttendanceForDate(dateStr, statusMap) {
+    const newList = students.map((s) => ({ ...s, attendanceHistory: { ...(s.attendanceHistory || {}), [dateStr]: statusMap[s.id] || "present" } }));
+    persistStudents(newList);
+    log(`تم حفظ الحضور ليوم ${dateStr}`, `Attendance saved for ${dateStr}`);
+    notify(t("attendanceSaved"));
   }
 
   function saveScores(id, scores, assessmentNotes) {
@@ -876,67 +1156,96 @@ export default function ArabicSupportCenterPrototype() {
     const newList = students.map((x) => (x.id === id ? { ...x, scores, assessmentNotes } : x));
     persistStudents(newList);
     if (s) log(`تم حفظ تقييم ${s.name}`, `Saved assessment for ${s.name}`);
+    notify(t("assessmentSaved"));
   }
 
   function saveNotes(id, notes) {
     const newList = students.map((x) => (x.id === id ? { ...x, notes } : x));
     persistStudents(newList);
+    notify(t("notesSaved"));
   }
 
   function resetData() {
     if (window.confirm(t("confirmReset"))) {
       persistStudents(initialStudents);
       persistActivity(initialActivity);
+      notify(t("dataReset"));
     }
   }
 
-  const present = students.filter((s) => s.attendance === "present").length;
+  function addUser(newAccount) {
+    const newList = [...dynamicAccounts, newAccount];
+    setDynamicAccounts(newList);
+    persist(ACCOUNTS_KEY, newList);
+    notify(t("userAdded"));
+  }
+
+  function removeUser(username) {
+    if (!window.confirm(t("confirmDeleteUser"))) return;
+    const newList = dynamicAccounts.filter((a) => a.username !== username);
+    setDynamicAccounts(newList);
+    persist(ACCOUNTS_KEY, newList);
+    notify(t("userDeleted"));
+  }
+
+  if (!account) return (
+    <LangContext.Provider value={{ lang, t, toggleLang, notify }}>
+      <LoginScreen accounts={allAccounts} onLogin={setAccount} />
+    </LangContext.Provider>
+  );
+
+  if (!dataLoaded) return (
+    <LangContext.Provider value={{ lang, t, toggleLang, notify }}>
+      <LoadingScreen />
+    </LangContext.Provider>
+  );
+
+  const present = students.filter((s) => getStatusForDate(s, todayStr()) === "present").length;
   const attention = students.filter(needsAttention);
 
   return (
-    <LangContext.Provider value={{ lang, t, toggleLang }}>
-      {!account ? (
-        <LoginScreen onLogin={setAccount} />
-      ) : !dataLoaded ? (
-        <LoadingScreen />
-      ) : (
-        <div dir={lang === "ar" ? "rtl" : "ltr"} lang={lang} className="asc-root" style={{ display: "flex", minHeight: "100vh" }}>
-          <style>{CSS}</style>
-          <Sidebar
-            page={page}
-            setPage={(p) => { setPage(p); setSelectedId(null); }}
-            account={account}
-            onLogout={() => { setAccount(null); setDataLoaded(false); }}
-            onReset={resetData}
-          />
-          <main className="asc-scroll" style={{ flex: 1, padding: 24, overflowY: "auto" }}>
-            {page === "dashboard" && (
-              <Dashboard account={account} total={students.length} present={present} attention={attention} activity={activity} onOpenStudent={openStudent} />
-            )}
-            {page === "students" && (
-              <StudentsPage students={students} query={query} setQuery={setQuery} onAdd={() => setFormStudent(emptyStudent())} onEdit={(s) => setFormStudent(s)} onDelete={deleteStudent} onOpen={openStudent} />
-            )}
-            {page === "profile" &&
-              (selected ? (
-                <StudentProfile
-                  student={selected}
-                  tab={profileTab}
-                  setTab={setProfileTab}
-                  onBack={() => setPage("students")}
-                  onEdit={() => setFormStudent(selected)}
-                  onAttendance={(status) => setAttendance(selected.id, status)}
-                  onSaveScores={(scores, notes) => saveScores(selected.id, scores, notes)}
-                  onSaveNotes={(notes) => saveNotes(selected.id, notes)}
-                />
-              ) : (
-                <EmptyProfile onBack={() => setPage("students")} />
-              ))}
-            {page === "attendance" && <AttendancePage students={students} onSet={setAttendance} onOpen={openStudent} />}
-            {page === "assessment" && <AssessmentPage students={students} selectedId={assessId} setSelectedId={setAssessId} onSave={saveScores} />}
-          </main>
-          {formStudent && <StudentFormModal data={formStudent} onCancel={() => setFormStudent(null)} onSave={saveStudent} />}
-        </div>
-      )}
+    <LangContext.Provider value={{ lang, t, toggleLang, notify }}>
+      <div dir={lang === "ar" ? "rtl" : "ltr"} lang={lang} className="asc-root" style={{ display: "flex", minHeight: "100vh" }}>
+        <style>{CSS}</style>
+        <Sidebar
+          page={page}
+          setPage={(p) => { setPage(p); setSelectedId(null); }}
+          account={account}
+          onLogout={() => { setAccount(null); setDataLoaded(false); }}
+          onReset={resetData}
+        />
+        <main className="asc-scroll" style={{ flex: 1, padding: 24, overflowY: "auto" }}>
+          {page === "dashboard" && (
+            <Dashboard account={account} total={students.length} present={present} attention={attention} activity={activity} onOpenStudent={openStudent} />
+          )}
+          {page === "overview" && <OverviewPage />}
+          {page === "students" && (
+            <StudentsPage students={students} query={query} setQuery={setQuery} onAdd={() => setFormStudent(emptyStudent())} onEdit={(s) => setFormStudent(s)} onDelete={deleteStudent} onOpen={openStudent} />
+          )}
+          {page === "profile" &&
+            (selected ? (
+              <StudentProfile
+                student={selected}
+                tab={profileTab}
+                setTab={setProfileTab}
+                onBack={() => setPage("students")}
+                onEdit={() => setFormStudent(selected)}
+                onAttendance={(status) => setAttendanceToday(selected.id, status)}
+                onSaveScores={(scores, notes) => saveScores(selected.id, scores, notes)}
+                onSaveNotes={(notes) => saveNotes(selected.id, notes)}
+              />
+            ) : (
+              <EmptyProfile onBack={() => setPage("students")} />
+            ))}
+          {page === "attendance" && <AttendancePage students={students} onSubmit={submitAttendanceForDate} onOpen={openStudent} />}
+          {page === "assessment" && <AssessmentPage students={students} selectedId={assessId} setSelectedId={setAssessId} onSave={saveScores} />}
+          {page === "users" && account.roleKey === "superadmin" && (
+            <ManageUsersPage builtIn={BASE_ACCOUNTS} dynamicAccounts={dynamicAccounts} onAdd={addUser} onRemove={removeUser} />
+          )}
+        </main>
+        {formStudent && <StudentFormModal data={formStudent} onCancel={() => setFormStudent(null)} onSave={saveStudent} />}
+        <Toast key={toast.id} message={toast.msg} />
+      </div>
     </LangContext.Provider>
   );
 }
